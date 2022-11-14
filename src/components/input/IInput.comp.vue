@@ -111,7 +111,7 @@ watch(value, (next) => {
     <div :style="rootStyle">
         <label v-show="!noLabel" :for="id">{{ label }}</label>
         <input
-            v-model="value"
+            v-model.trim="value"
             :id="id"
             :placeholder="placeholder"
             :style="inputStyle"
@@ -126,6 +126,12 @@ watch(value, (next) => {
 <style scoped>
 div {
     display: grid;
+    grid-template-rows: 0.75rem auto 0.75rem;
+}
+
+label,
+span {
+    font-size: 0.75rem;
 }
 
 input {
