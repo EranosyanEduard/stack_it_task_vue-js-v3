@@ -93,6 +93,9 @@ const style: ComputedRef<Style> = computed(() => {
 
 <style scoped>
 .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     text-transform: uppercase;
     transition: transform 0.1s;
