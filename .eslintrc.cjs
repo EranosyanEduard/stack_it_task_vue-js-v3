@@ -14,6 +14,7 @@ module.exports = {
     },
     rules: {
         'no-undef': 'off',
-        'prettier/prettier': ['error', {}, { usePrettierrc: true }]
+        'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
     }
 }
