@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect, type ComputedRef, type PropType, type Ref } from 'vue'
 import { Colors, Units } from '#style'
-import { UInput, type TForm, type TInput, type TTable } from '@/components'
+import { UInput, type TForm, type TInput, type TPagination, type TTable } from '@/components'
 import type { Company } from './IHandbook.type'
 
 const createTRow = (data: Company): TTable.ICell[] => {
@@ -19,6 +19,8 @@ const headers: readonly TTable.IHeader[] = [
     { text: 'ФИО руководителя', useSort: true },
     { text: 'Телефон', useSort: false }
 ]
+
+const itemPerPage = 15
 
 const phoneCellStyle = {
     color: Colors.primary.base,
@@ -60,15 +62,18 @@ watchEffect(() => {
     rows.value = props.companies.map(createTRow)
 })
 
+const records: Ref<TPagination.OnChangePageEvent> = ref([0, itemPerPage])
 const search: Ref<TInput.IVModel> = ref({ id: 'search', isValid: true, value: '' })
 const showAddCompanyPopUp: Ref<boolean> = ref(false)
 const submitBtnLoading: Ref<boolean> = ref(false)
 
 const compRows: ComputedRef<Array<TTable.ICell[]>> = computed(() => {
     const personNameStart = search.value.value.toLowerCase()
+    const slice = rows.value.slice(records.value[0], records.value[1])
+
     return personNameStart.length > 0
-        ? rows.value.filter((cells) => cells[1].text.toLowerCase().startsWith(personNameStart))
-        : rows.value
+        ? slice.filter((cells) => cells[1].text.toLowerCase().startsWith(personNameStart))
+        : slice
 })
 
 const toggleShowAddCompanyPopUp = (): void => {
@@ -79,6 +84,10 @@ const onCell = (evtPayload: TTable.IOnCellEvent): void => {
     if (evtPayload.event === 'remove') {
         rows.value = rows.value.filter((_, idx) => idx !== evtPayload.row)
     }
+}
+
+const onChangePage = (evtPayload: TPagination.OnChangePageEvent): void => {
+    records.value = evtPayload
 }
 
 const onSortColumn = (evtPayload: TTable.ISortedColumn): void => {
@@ -131,7 +140,12 @@ const onSubmit = async (evtPayload: Company): Promise<void> => {
             @sortColumn="onSortColumn"
         ></ITable>
         <!-- Row 3 -->
-        <div class="column_no_last" style="background: green; height: 100px"></div>
+        <IPagination
+            class="column_no_last"
+            :itemPerPage="itemPerPage"
+            :size="rows.length"
+            @changePage="onChangePage"
+        ></IPagination>
         <!-- No flow -->
         <IPopUp v-if="showAddCompanyPopUp">
             <IForm
