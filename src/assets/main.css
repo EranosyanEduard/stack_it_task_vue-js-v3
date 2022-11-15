@@ -1,0 +1,49 @@
+:root {
+    /* Базовая единица */
+    --base-unit-1-px: 4px;
+    --base-unit-2-px: calc(var(--base-unit-1-px) * 2);
+    --base-unit-3-px: calc(var(--base-unit-1-px) * 3);
+    --base-unit-4-px: calc(var(--base-unit-1-px) * 4);
+    --base-unit-5-px: calc(var(--base-unit-1-px) * 5);
+    --base-unit-6-px: calc(var(--base-unit-1-px) * 6);
+    --base-unit-7-px: calc(var(--base-unit-1-px) * 7);
+    --base-unit-8-px: calc(var(--base-unit-1-px) * 8);
+    --base-unit-9-px: calc(var(--base-unit-1-px) * 9);
+    --base-unit-10-px: calc(var(--base-unit-1-px) * 10);
+    --base-unit-11-px: calc(var(--base-unit-1-px) * 11);
+    --base-unit-12-px: calc(var(--base-unit-1-px) * 12);
+    --base-unit-13-px: calc(var(--base-unit-1-px) * 13);
+    --base-unit-14-px: calc(var(--base-unit-1-px) * 14);
+    --base-unit-15-px: calc(var(--base-unit-1-px) * 15);
+    --base-unit-16-px: calc(var(--base-unit-1-px) * 16);
+    --base-unit-17-px: calc(var(--base-unit-1-px) * 17);
+    --base-unit-18-px: calc(var(--base-unit-1-px) * 18);
+    --base-unit-19-px: calc(var(--base-unit-1-px) * 19);
+    --base-unit-20-px: calc(var(--base-unit-1-px) * 20);
+}
+
+body {
+    margin: 0;
+}
+
+#app {
+    box-sizing: border-box;
+    height: 100vh;
+    padding: 40px;
+}
+
+.theme {
+    --color-primary-base: #526ed3;
+
+    color: var(--color-secondary-base);
+    font-size: 16px;
+    font-family: Roboto, sans-serif;
+}
+
+.theme_mode_light {
+    --color-background-base: #fff;
+    --color-background-darken-1: rgba(0 0 0 / 20%);
+    --color-error-base: #f45725;
+    --color-grey-base: #d7d7d7;
+    --color-secondary-base: #1b1f3b;
+}

@@ -1,3 +1,3 @@
-import IHandbook from './handbook'
+import IHandbook, { THandbook } from './handbook'
 
-export { IHandbook }
+export { IHandbook, type THandbook }

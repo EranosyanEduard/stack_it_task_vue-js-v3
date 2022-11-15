@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, type ComputedRef, type Ref } from 'vue'
+import { computed, ref, watchEffect, type ComputedRef, type PropType, type Ref } from 'vue'
 import { Colors, Units } from '#style'
 import { UInput, type TForm, type TInput, type TTable } from '@/components'
+import type { Company } from './IHandbook.type'
 
-const createTRow = (data: Record<'name' | 'person' | 'phone', string>): TTable.ICell[] => {
+const createTRow = (data: Company): TTable.ICell[] => {
     const { name, person, phone } = data
     return [{ text: name }, { text: person }, { text: phone, style: phoneCellStyle }]
 }
@@ -46,20 +47,27 @@ const inputs: readonly TForm.IInput[] = [
     }
 ]
 
-const rows: Ref<Array<TTable.ICell[]>> = ref([
-    [{ text: 'f' }, { text: 'b' }, { text: 'b', style: phoneCellStyle }],
-    [{ text: 'e' }, { text: 'c' }, { text: 'c', style: phoneCellStyle }],
-    [{ text: 'g' }, { text: 'a' }, { text: 'a', style: phoneCellStyle }]
-])
+const props = defineProps({
+    companies: {
+        type: Array as PropType<Company[]>,
+        required: true
+    }
+})
+
+const rows: Ref<Array<TTable.ICell[]>> = ref([])
+
+watchEffect(() => {
+    rows.value = props.companies.map(createTRow)
+})
 
 const search: Ref<TInput.IVModel> = ref({ id: 'search', isValid: true, value: '' })
 const showAddCompanyPopUp: Ref<boolean> = ref(false)
 const submitBtnLoading: Ref<boolean> = ref(false)
 
 const compRows: ComputedRef<Array<TTable.ICell[]>> = computed(() => {
-    const personNameStart = search.value.value
+    const personNameStart = search.value.value.toLowerCase()
     return personNameStart.length > 0
-        ? rows.value.filter((cells) => cells[1].text.startsWith(personNameStart))
+        ? rows.value.filter((cells) => cells[1].text.toLowerCase().startsWith(personNameStart))
         : rows.value
 })
 
@@ -78,10 +86,15 @@ const onSortColumn = (evtPayload: TTable.ISortedColumn): void => {
 
     rows.value = rows.value
         .slice()
-        .sort((cellsA, cellsB) => sort(cellsA[evtPayload.cell].text, cellsB[evtPayload.cell].text))
+        .sort((cellsA, cellsB) =>
+            sort(
+                cellsA[evtPayload.cell].text.toLowerCase(),
+                cellsB[evtPayload.cell].text.toLowerCase()
+            )
+        )
 }
 
-const onSubmit = async (evtPayload: Parameters<typeof createTRow>[0]): Promise<void> => {
+const onSubmit = async (evtPayload: Company): Promise<void> => {
     submitBtnLoading.value = true
 
     try {
