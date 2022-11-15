@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/main.css'
-import { IButton, IForm, IInput, IPopUp, ISpinner, ITable } from './components'
+import { IButton, IForm, IInput, IPagination, IPopUp, ISpinner, ITable } from './components'
 
 const app = createApp(App)
 
@@ -14,6 +14,7 @@ const defineComps = (): void => {
         IButton,
         IForm,
         IInput,
+        IPagination,
         IPopUp,
         ISpinner,
         ITable
