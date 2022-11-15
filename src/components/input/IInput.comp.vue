@@ -12,6 +12,10 @@ const props = defineProps({
         type: String,
         default: Colors.primary.base
     },
+    disabled: {
+        type: Boolean,
+        default: false
+    },
     height: {
         type: String,
         default: Units.unit_10
@@ -112,6 +116,7 @@ watch(value, (next) => {
         <label v-show="!noLabel" :for="id">{{ label }}</label>
         <input
             v-model.trim="value"
+            :disabled="disabled"
             :id="id"
             :placeholder="placeholder"
             :style="inputStyle"
