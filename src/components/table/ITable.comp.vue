@@ -128,6 +128,7 @@ const onSortedColumnBtn = (cell: number): void => {
 <style scoped>
 table {
     border-spacing: 0;
+    height: fit-content;
 }
 
 th,
