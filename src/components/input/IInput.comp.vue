@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, type ComputedRef, type PropType, type Ref } from 'vue'
 import { Colors, Units } from '#style'
-import type { InputTypes, IValidationRule, IVModel, Style } from './IInput.type'
+import type { InputTypes, IVModel, Style, UseValidator } from './IInput.type'
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -48,13 +48,13 @@ const props = defineProps({
         type: String,
         default: Units.unit_1
     },
-    rules: {
-        type: Array as PropType<IValidationRule[]>,
-        default: () => []
-    },
     type: {
         type: String as PropType<TupleToUnion<InputTypes>>,
         default: 'text'
+    },
+    validator: {
+        type: Function as PropType<ReturnType<UseValidator>>,
+        default: () => ''
     },
     width: {
         type: String,
@@ -64,7 +64,7 @@ const props = defineProps({
 
 const error: Ref<string> = ref('')
 const isFocus: Ref<boolean> = ref(false)
-const value: Ref<string> = ref('')
+const value: Ref<string> = ref(props.modelValue.value)
 
 const color: ComputedRef<string> = computed(() => {
     if (error.value.length > 0) return Colors.error.base
@@ -92,21 +92,17 @@ const rootStyle: ComputedRef<Record<'color' | 'rowGap', string>> = computed(() =
 watch(value, (next) => {
     const payload: IVModel = {
         id: props.id,
+        isDirty: true,
         isValid: true,
         value: next
     }
 
-    if (props.rules.length > 0) {
-        for (const { error: err, validator } of props.rules) {
-            if (!validator(next)) {
-                error.value = err
-                payload.isValid = false
-                emitUpdateVModel(payload)
-                return
-            }
-        }
-        error.value = ''
+    error.value = props.validator(next)
+
+    if (error.value.length > 0) {
+        payload.isValid = false
     }
+
     emitUpdateVModel(payload)
 })
 </script>

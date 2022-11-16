@@ -1,6 +1,11 @@
-import type { IValidationRule } from './IInput.type'
+import type { IValidationRule, UseValidator } from './IInput.type'
 
 // #region 'Validation rules'
+const useValidator: UseValidator =
+    (...args) =>
+    (input) =>
+        args.find(({ validator }) => !validator(input))?.error ?? ''
+
 const onlyLettersAndSpaces: IValidationRule = {
     error: 'Используйте символы алфавита и пробелы',
     validator: (input) => /^[a-zа-яё ]+$/i.test(input)
@@ -29,4 +34,4 @@ const validators = {
 } as const
 // #endregion 'Validation rules'
 
-export { validators }
+export { validators, useValidator }
