@@ -5,6 +5,8 @@ import { Units } from '#style'
 import { IButton } from './components'
 import { IHandbook, type THandbook } from './views'
 
+const rootStyle = { padding: Units.unit_10, rowGap: Units.unit_5 } as const
+
 const companies: Ref<THandbook.Company[]> = ref([])
 
 const fakeCompanyFactory = (): THandbook.Company => ({
@@ -19,7 +21,7 @@ const createRandomCompanies = (): void => {
 </script>
 
 <template>
-    <div class="theme theme_mode_light" :style="{ rowGap: Units.unit_5 }">
+    <div class="theme theme_mode_light" :style="rootStyle">
         <header>
             <h1>StackIt task</h1>
             <IButton outlined @click="createRandomCompanies">+50 организаций</IButton>
@@ -32,8 +34,10 @@ const createRandomCompanies = (): void => {
 
 <style scoped>
 div {
+    box-sizing: border-box;
     display: grid;
-    grid-template-rows: 10% 1fr;
+    grid-template: 10% 1fr / minmax(800px, 1440px);
+    justify-content: center;
     height: 100%;
 }
 
