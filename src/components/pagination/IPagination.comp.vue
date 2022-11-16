@@ -17,11 +17,13 @@ const props = defineProps({
 })
 
 const currentPageNo: Ref<number> = ref(1)
-const page: Ref<TInput.IVModel> = ref({ id: 'page', isValid: true, value: '1' })
+const page: Ref<TInput.IVModel> = ref({ id: 'page', isDirty: false, isValid: true, value: '1' })
 
 watch(page, (next) => {
-    if (next.isValid) {
-        const nextPage = next.value.startsWith('0') ? 1 : parseInt(next.value, 10)
+    const { isValid, value } = next
+
+    if (isValid && !value.startsWith('0')) {
+        const nextPage = parseInt(value, 10)
         const startIdx = (nextPage - 1) * props.itemPerPage
 
         if (startIdx < props.size) {
@@ -42,7 +44,7 @@ watch(page, (next) => {
             :disabled="size === 0"
             :id="page.id"
             noHint
-            :rules="[UInput.validators.onlyDigits]"
+            :validator="UInput.useValidator(UInput.validators.onlyDigits)"
             :width="Units.unit_15"
         />
         <span>{{ `${currentPageNo} стр.` }}</span>

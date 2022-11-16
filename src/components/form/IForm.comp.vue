@@ -2,7 +2,7 @@
 import { computed, reactive, ref, watch, type ComputedRef, type PropType, type Ref } from 'vue'
 import { Colors, Units } from '#style'
 import type { IInput, Style } from './IForm.type'
-import type { TInput } from '../input'
+import { TInput, UInput } from '../input'
 
 const btnWidth = '25%'
 
@@ -35,9 +35,15 @@ const props = defineProps({
     }
 })
 
+const preparedInputs = props.inputs.map(({ rules, ...rest }) => ({
+    ...rest,
+    validator: UInput.useValidator(...rules)
+}))
+
 const inputValues: TInput.IVModel[] = reactive(
     props.inputs.map(({ id }) => ({
         id,
+        isDirty: false,
         isValid: true,
         value: ''
     }))
@@ -55,8 +61,10 @@ const style: ComputedRef<Style> = computed(() => {
 })
 
 watch(inputValues, (next) => {
-    for (const { isValid } of next) {
-        if (!isValid) {
+    for (let idx = 0; idx < next.length; idx++) {
+        const { isDirty, isValid, value } = next[idx]
+
+        if (!isValid || (!isDirty && preparedInputs[idx].validator(value).length > 0)) {
             submitBtnDisabled.value = true
             return
         }
@@ -81,13 +89,13 @@ const onSubmit = (_evt: SubmitEvent): void => {
             <div :style="style">
                 <legend>{{ legend }}</legend>
                 <IInput
-                    v-for="(input, index) of inputs"
+                    v-for="(input, index) of preparedInputs"
                     v-model="inputValues[index]"
                     :id="input.id"
                     :key="input.id"
                     :label="input.label"
-                    :rules="input.rules"
                     :type="input.type"
+                    :validator="input.validator"
                 />
                 <div>
                     <IButton
