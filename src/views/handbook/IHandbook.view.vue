@@ -62,19 +62,22 @@ watchEffect(() => {
     rows.value = props.companies.map(createTRow)
 })
 
-const records: Ref<TPagination.OnChangePageEvent> = ref([0, itemPerPage])
-const search: Ref<TInput.IVModel> = ref({ id: 'search', isValid: true, value: '' })
+const records: Ref<TPagination.OnChangePageEvent> = ref([0, itemPerPage]) as any
+const search: Ref<TInput.IVModel> = ref({ id: 'search', isDirty: false, isValid: true, value: '' })
 const showAddCompanyPopUp: Ref<boolean> = ref(false)
 const submitBtnLoading: Ref<boolean> = ref(false)
 
 const compRows: ComputedRef<Array<TTable.ICell[]>> = computed(() => {
     const personNameStart = search.value.value.toLowerCase()
-    const slice = rows.value.slice(records.value[0], records.value[1])
 
     return personNameStart.length > 0
-        ? slice.filter((cells) => cells[1].text.toLowerCase().startsWith(personNameStart))
-        : slice
+        ? rows.value.filter((cells) => cells[1].text.toLowerCase().startsWith(personNameStart))
+        : rows.value.slice(records.value[0], records.value[1])
 })
+
+const searchBtnDisabled: ComputedRef<boolean> = computed(() =>
+    [compRows.value, search.value.value].every((seq) => seq.length === 0)
+)
 
 const toggleShowAddCompanyPopUp = (): void => {
     showAddCompanyPopUp.value = !showAddCompanyPopUp.value
@@ -122,7 +125,14 @@ const onSubmit = async (evtPayload: Company): Promise<void> => {
 <template>
     <div class="handbook" :style="{ gap: Units.unit_5 }">
         <!-- Row 1 -->
-        <IInput v-model="search" :id="search.id" noHint noLabel placeholder="ФИО руководителя" />
+        <IInput
+            v-model="search"
+            :disabled="searchBtnDisabled"
+            :id="search.id"
+            noHint
+            noLabel
+            placeholder="ФИО руководителя"
+        />
         <IButton
             class="column_no_last"
             :width="addCompanyBtnWidth"
